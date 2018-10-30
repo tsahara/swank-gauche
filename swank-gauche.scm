@@ -5,18 +5,18 @@
 ;;;   Redistribution and use in source and binary forms, with or without
 ;;;   modification, are permitted provided that the following conditions
 ;;;   are met:
-;;;   
+;;;
 ;;;   1. Redistributions of source code must retain the above copyright
 ;;;      notice, this list of conditions and the following disclaimer.
-;;;  
+;;;
 ;;;   2. Redistributions in binary form must reproduce the above copyright
 ;;;      notice, this list of conditions and the following disclaimer in the
 ;;;      documentation and/or other materials provided with the distribution.
-;;;  
+;;;
 ;;;   3. Neither the name of the authors nor the names of its contributors
 ;;;      may be used to endorse or promote products derived from this
 ;;;      software without specific prior written permission.
-;;;  
+;;;
 ;;;   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 ;;;   "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 ;;;   LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -29,7 +29,7 @@
 ;;;   NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 ;;;   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (define-module swank-gauche
-  (export 
+  (export
    ;; entry point
    swank start-swank)
   (use srfi-1)
@@ -186,7 +186,7 @@
 		   ((condition-type? packet) (values nil t))
                    ((event-match-p packet pattern) packet)
                    (else (dispatch-event packet)
-                         ;; rescan event queue, interrupts may enqueue new events 
+                         ;; rescan event queue, interrupts may enqueue new events
                          (loop))))))))
 
 (define (poll-for-event pattern)
@@ -309,7 +309,7 @@
     ((:emacs-rex params ...) (apply emacs-rex params))
     ((:emacs-interrupt thread-id)
      (interrupt-worker-thread thread-id))
-    (((or :write-string 
+    (((or :write-string
 	   :debug :debug-condition :debug-activate :debug-return :channel-send
 	   :presentation-start :presentation-end
 	   :new-package :new-features :ed :%apply :indentation-update
@@ -372,7 +372,7 @@
           (flush out)
           (close-output-port out)
           (close-input-port in)))))
-                
+
 (define (emacs-rex sexp package thread id)
   (parameterize
       ((*emacs-packet-id* id)
@@ -389,7 +389,7 @@
 	    (let ((ok #f))
 	      (dynamic-wind
 		  (lambda () #f)
-		  (lambda () 
+		  (lambda ()
 		    (write-return `(:ok ,(apply (swank-gauche: (car sexp))
 						(cdr sexp))))
 		    (set! ok #t))
@@ -466,7 +466,7 @@
     format-values))
 
 (define (format-values . values)
-  (if (null? values) 
+  (if (null? values)
       "; No value"
       (call-with-output-string
         (lambda (out)
@@ -498,7 +498,7 @@
 	       (append-map module-exports% (module-imports module)))))
 
 (define (all-completions pattern env match?)
-  (filter (lambda (s) (match? pattern s)) 
+  (filter (lambda (s) (match? pattern s))
 	  (visible-symbols env)))
 
 (define (longest-common-prefix strings)
@@ -574,7 +574,7 @@
 
 (define (get-func-args op-sym a)
   (cond
-   ((number? a) 
+   ((number? a)
     (cons op-sym
 	  (map (lambda (i)
 		 (string->symbol #`"arg,i")) (iota a))))
@@ -592,7 +592,7 @@
 	(and-let* ((val (global-variable-ref env sym #f))
 		   (not (procedure? val))
 		   (a (arity val)))
-	  (list (get-func-args sym 
+	  (list (get-func-args sym
 			       (if (pair? a) (car a) a)))))))
 
 (defslimefun operator-arglist (op-name module)
@@ -625,7 +625,7 @@
 	((eq? (car lis) '&rest) '(&rest ===> rest <===))
 	((eq? (car lis) '...)   '(===> ... <===))
 	((eq? (car lis) '&optional)
-	 ;; skip optional-parameter indicator 
+	 ;; skip optional-parameter indicator
 	 (cons '&optional (emphasis (cdr lis) num)))
 	((<= num 0) `(===> ,(car lis) <=== ,@(cdr lis)))
 	(else
@@ -663,13 +663,13 @@
 		       (reverse (arglist-candidates form)))
 	     #f)))
 
-(defslimefun autodoc (raw-form :key 
+(defslimefun autodoc (raw-form :key
 			       (print-right-margin #f)
 			       (print-lines #f))
   ;; create arglist
   (list
    (cond ((elisp-false? (cadr raw-form)) "")
-	 ((find-arglist (parse-raw-form (cdr raw-form))) 
+	 ((find-arglist (parse-raw-form (cdr raw-form)))
 	  => (lambda (arglist)
 	       (format #f "~a" (emphasis (car arglist)
 					 (cadr arglist)))))
@@ -733,7 +733,7 @@
 	 (if newline '((:newline)) '())))
 
 (define-macro (label-value-line* . label-values)
-  `(append ,@(map (match-lambda 
+  `(append ,@(map (match-lambda
 		   ((label value ... )
 		    `(label-value-line ,label ,@value)))
 		  label-values)))
@@ -843,7 +843,7 @@
        '((:newline)))
    (let ((content (hash-table-map ht cons)))
      (cond ((every (lambda (x) (or-pred (first x) string? symbol?)) content)
-	    (set! content (sort content (make-compare-func 
+	    (set! content (sort content (make-compare-func
 					  string<?
 					  (lambda (x) (x->string (first x)))))))
 	   ((every (lambda (x) (number? (first x))) content)
@@ -885,7 +885,7 @@
 				(row-major-array-ref array i))
 			 (k (1+ i) max)))))))
 
-;;;; Chars	       
+;;;; Chars
 (define-method emacs-inspect ((c <char>))
   (append
    (label-value-line*
@@ -895,12 +895,12 @@
      :string #`"#x,(number->string (char->ucs c) 16)")
     ("Lower cased" (char-downcase c))
     ("Upper cased" (char-upcase c)))))
-    
+
 ;;;; Number
 (define-method emacs-inspect ((n <number>))
   (append
    (list
-    (cond ((integer? n) 
+    (cond ((integer? n)
 	   (string-append
 	    "An "
 	    (if (exact? n) "Exact " "Inexact ")
@@ -1041,7 +1041,7 @@
          (ps (append-map (lambda (part)
 				  (prepare-part part istate))
 				range)))
-    (list ps 
+    (list ps
           (if (< (length ps) (- end start))
               (+ start (length ps))
               (+ end 1000))
@@ -1107,7 +1107,7 @@ Return nil if there's no previous object."
 	 (*istate* (istate.next (*istate*)))
 	 (istate>elisp (*istate*)))
 	(else nil)))
-	 
+
 (defslimefun quit-inspector ()
   (reset-inspector)
   nil)
