@@ -440,7 +440,7 @@
 	 :features '()
 	 :modules ,(all-modules->string-list)
 	 :lisp-implementation (:type "Gauche" :version ,(gauche-version))
-	 :version "2012-01-06"))
+	 :version "2.22"))
 
 (defslimefun quit-lisp ()
   (exit))
