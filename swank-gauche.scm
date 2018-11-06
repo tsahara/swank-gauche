@@ -564,7 +564,7 @@
 						  #/@code{(\S*)}/ "\\1"
 						  #/@def\w+ / ""
 						  #/:optional/ "&optional"
-						  #/\[(.*)\]/ "&optional \\1"))))
+						  #/\[(.*?)\]/ "&optional \\1"))))
 		    '())
 		*operator-args*)))
 
