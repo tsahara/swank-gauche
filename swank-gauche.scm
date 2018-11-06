@@ -590,7 +590,7 @@
 		     *operator-args*)
     (if (not (null? args)) args
 	(and-let* ((val (global-variable-ref env sym #f))
-		   (not (procedure? val))
+		   ( (procedure? val))
 		   (a (arity val)))
 	  (list (get-func-args sym
 			       (if (pair? a) (car a) a)))))))
