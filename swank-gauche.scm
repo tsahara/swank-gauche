@@ -306,15 +306,16 @@
 (define (dispatch-event event)
   (log-event "dispatch-event: ~s~%" event)
   (match event
-    ((:emacs-rex params ...) (apply emacs-rex params))
-    ((:emacs-interrupt thread-id)
+    ((':emacs-rex params ...) (apply emacs-rex params))
+    ((':emacs-interrupt thread-id)
      (interrupt-worker-thread thread-id))
-    (((or :write-string
-	   :debug :debug-condition :debug-activate :debug-return :channel-send
-	   :presentation-start :presentation-end
-	   :new-package :new-features :ed :%apply :indentation-update
-	   :eval :eval-no-wait :background-message :inspect :ping
-	   :y-or-n-p :read-string :read-aborted :return) params ...)
+    (((or ':write-string
+          ':debug ':debug-condition ':debug-activate
+          ':debug-return ':channel-send
+          ':presentation-start ':presentation-end
+          ':new-package ':new-features ':ed ':%apply ':indentation-update
+          ':eval ':eval-no-wait ':background-message ':inspect ':ping
+          ':y-or-n-p ':read-string ':read-aborted ':return) params ...)
      (write-packet event))
     (_
      (log-event "Unknown event: ~s~%" event))))
@@ -1013,15 +1014,15 @@
      ((string? part) (list part))
      ((pair? part)
       (match part
-	((:newline) (list newline))
-	((:value obj rest ...)
+	((':newline) (list newline))
+	((':value obj rest ...)
 	 (let-optionals* rest ((str #f))
 	   (list (value-part obj str (istate.parts istate)))))
-	((:action label lambda rest ...)
+	((':action label lambda rest ...)
 	 (let-keywords rest ((refreshp #t))
 	   (list (action-part label lambda refreshp
 			      (istate.actions istate)))))
-	((:line label value)
+	((':line label value)
 	 (list (write-to-string/ss label) ": "
 	       (value-part value #f (istate.parts istate))
 	       newline))))
